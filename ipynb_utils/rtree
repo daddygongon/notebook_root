@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+require 'systemu'
+require 'colorize'
+
+opt = []
+unless ARGV[0]==nil
+  while ARGV[0].match(/^\-/)
+    opt << ARGV.shift
+    opt << ARGV.shift
+  end
+  opts = opt.join(' ')
+  dir = ARGV[0..-1].join(' ') || '.'
+else
+  opts = nil
+  dir = nil
+end
+command = "tree #{opts} #{dir}"
+_s, out, _e = systemu command
+out.each_line do |line|
+  if line.include?('.ipynb')
+    puts line.split('->')[0].chomp.blue
+  elsif line.include?('.pdf')
+    puts line.chomp.magenta
+  elsif /.pdf/ =~ line
+    puts line.chomp.magenta
+  elsif /.png/ =~ line
+    puts line.chomp.black
+  else
+    puts line.chomp.green
+  end
+end
